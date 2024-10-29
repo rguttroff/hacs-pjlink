@@ -1,0 +1,22 @@
+{
+    "config": {
+        "error": {
+            "unknown": "Unkown error",
+            "projector unavailable": "Invalid hostname or IP address"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "host": "Host",
+                    "password": "Password",
+                    "port": "Port",
+                    "encoding": "Encoding",
+                    "name": "Name"
+                },
+                "description": "Please enter your password if one has been configured for PJLink",
+                "title": "Configure the PJLink device"
+            }
+        }
+    },
+    "title": "PJLink"
+}
