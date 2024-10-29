@@ -5,10 +5,10 @@
     "@rguttroff"
   ],
   "config_flow": true,
-  "documentation": "https://github.com/rguttroff/jbopjlink",
+  "documentation": "https://github.com/rguttroff/hacs-pjlink",
   "integration_type": "device",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/rguttroff/jbopjlink/issues",
+  "issue_tracker": "https://github.com/rguttroff/hacs-pjlink/issues",
   "loggers": ["pypjlink"],
   "requirements": ["pypjlink2==1.2.1"],
   "version": "1.0.0"
