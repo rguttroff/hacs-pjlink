@@ -27,7 +27,7 @@ from .entity import PjLinkDeviceEntity
 _LOGGER = logging.getLogger(__name__)
 
 MUSIC_PLAYER_BASE_SUPPORT = (
-    MediaPlayerEntityFeature.SELECT_SOURCE
+    MediaPlayerEntityFeature.TURN_ON | MediaPlayerEntityFeature.TURN_OFF
 )
 
 
@@ -78,7 +78,12 @@ class PjLinkMediaPlayer(PjLinkDeviceEntity, MediaPlayerEntity):
     def source_mapping(self):
         """Return a mapping of the actual source names to their labels configured in the PjLink App."""
         ret = {}
-        for inp in self.coordinator.data.input_list:
+
+        input_list = self.coordinator.data.input_list
+        if input_list is None:
+            input_list = []
+
+        for inp in input_list:
             ret[inp] = inp
         return ret
 
@@ -117,11 +122,13 @@ class PjLinkMediaPlayer(PjLinkDeviceEntity, MediaPlayerEntity):
         """Flag media player features that are supported."""
         supported_features = MUSIC_PLAYER_BASE_SUPPORT
 
-        supported_features |= (
-            MediaPlayerEntityFeature.TURN_ON | MediaPlayerEntityFeature.TURN_OFF
-        )
+        if self.coordinator.data.input_list is not None:
+            supported_features |= (
+                    MediaPlayerEntityFeature.SELECT_SOURCE
+            )
 
-        supported_features |= MediaPlayerEntityFeature.VOLUME_MUTE
+        if self.coordinator.data.audio_mute is not None:
+            supported_features |= MediaPlayerEntityFeature.VOLUME_MUTE
 
         return supported_features
 

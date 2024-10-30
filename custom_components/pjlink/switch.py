@@ -24,11 +24,26 @@ async def async_setup_entry(
 
     entities.append(PjLinkPowerSwitch("power", "Power", coordinator))
 
+    if coordinator.data.audio_mute is not None:
+        entities.append(PjLinkAudioMuteSwitch("audio_mute", "Audio Mute", coordinator))
+
+    if coordinator.data.video_mute is not None:
+        entities.append(PjLinkVideoMuteSwitch("video_mute", "Video Mute", coordinator))
+
     async_add_entities(entities)
 
 
 class PjLinkPowerSwitch(PjLinkCapabilityEntity, SwitchEntity):
     """Representation of a PjLink power switch."""
+
+    def __init__(
+        self,
+        id: str,
+        name: str,
+        coordinator: PjLinkDataUpdateCoordinator
+    ) -> None:
+        """Initialize the PjLink Select entity."""
+        PjLinkCapabilityEntity.__init__(self, id, name, "", coordinator)
 
     @property
     def is_on(self) -> bool:
@@ -37,8 +52,58 @@ class PjLinkPowerSwitch(PjLinkCapabilityEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn on the capability."""
-        await self.coordinator.turn_on()
+        self.coordinator.turn_on()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn off the capability."""
-        await self.capability.turn_off()
+        self.coordinator.turn_off()
+
+class PjLinkAudioMuteSwitch(PjLinkCapabilityEntity, SwitchEntity):
+    """Representation of a PjLink audio mute switch."""
+
+    def __init__(
+        self,
+        id: str,
+        name: str,
+        coordinator: PjLinkDataUpdateCoordinator
+    ) -> None:
+        """Initialize the PjLink Select entity."""
+        PjLinkCapabilityEntity.__init__(self, id, name, "mdi:volume-mute", coordinator)
+
+    @property
+    def is_on(self) -> bool:
+        """Return the current status."""
+        return self.coordinator.data.audio_mute
+
+    async def async_turn_on(self, **kwargs: Any) -> None:
+        """Turn on the capability."""
+        self.coordinator.mute_volume(True)
+
+    async def async_turn_off(self, **kwargs: Any) -> None:
+        """Turn off the capability."""
+        self.coordinator.mute_volume(False)
+
+class PjLinkVideoMuteSwitch(PjLinkCapabilityEntity, SwitchEntity):
+    """Representation of a PjLink video mute switch."""
+
+    def __init__(
+        self,
+        id: str,
+        name: str,
+        coordinator: PjLinkDataUpdateCoordinator
+    ) -> None:
+        """Initialize the PjLink Select entity."""
+        PjLinkCapabilityEntity.__init__(self, id, name, "mdi:video-off", coordinator)
+
+    @property
+    def is_on(self) -> bool:
+        """Return the current status."""
+        return self.coordinator.data.video_mute
+
+    async def async_turn_on(self, **kwargs: Any) -> None:
+        """Turn on the capability."""
+        self.coordinator.mute_video(True)
+
+    async def async_turn_off(self, **kwargs: Any) -> None:
+        """Turn off the capability."""
+        self.coordinator.mute_video(False)

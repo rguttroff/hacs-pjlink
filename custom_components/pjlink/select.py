@@ -8,7 +8,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .coordinator import PjLinkDataUpdateCoordinator
+from .coordinator import PjLinkDataUpdateCoordinator, format_input_source
 from .entity import PjLinkCapabilityEntity
 
 
@@ -22,7 +22,8 @@ async def async_setup_entry(
 
     entities: list = []
 
-    entities.append(PjLinkInputSoruce("input_source", "Input source", coordinator))
+    if coordinator.data.input is not None:
+        entities.append(PjLinkInputSoruce("input_source", "Input source", coordinator))
 
     async_add_entities(entities)
 
@@ -37,12 +38,16 @@ class PjLinkInputSoruce(PjLinkCapabilityEntity, SelectEntity):
         coordinator: PjLinkDataUpdateCoordinator
     ) -> None:
         """Initialize the PjLink Select entity."""
-        PjLinkCapabilityEntity.__init__(self, id, name, coordinator)
-        self._attr_options = list(coordinator.data.input_list)
+        PjLinkCapabilityEntity.__init__(self, id, name, "", coordinator)
+
+        if self.coordinator.data.input_list is not None:
+            self._attr_options = list(format_input_source(*x) for x in self.coordinator.data.input_list)
+        else:
+            self._attr_options = [self.coordinator.data.input]
 
     async def async_select_option(self, option: str) -> None:
         """Select the given option."""
-        await self.coordinator.select_source(value)
+        self.coordinator.select_source(option)
 
     @property
     def current_option(self) -> str | None:

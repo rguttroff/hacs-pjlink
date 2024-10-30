@@ -66,11 +66,12 @@ class PjLinkCapabilityEntity(PjLinkDeviceEntity):
         self,
         id: str,
         name: str,
+        icon: str,
         coordinator: PjLinkDataUpdateCoordinator
     ) -> None:
         """Initialize a capability based entity."""
         self.capability_id = id
-        super().__init__(name=name, icon="", coordinator=coordinator)
+        super().__init__(name=name, icon=icon, coordinator=coordinator)
 
     @property
     def unique_id(self) -> str:
